@@ -1,3 +1,4 @@
+@extends('layouts.app')
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,83 +8,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Estilos base (igual que catalogo.blade.php) */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        /* Navbar (igual que welcome) */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 5%;
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff441f;
-        }
-        
-        .logo span {
-            color: #333;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .nav-links a {
-            font-weight: 500;
-            position: relative;
-            padding: 5px 0;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a:hover {
-            color: #ff441f;
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: #ff441f;
-            transition: width 0.3s;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
+
         /* Contenido principal */
         .catalogo-container {
-            padding: 120px 5% 80px;
+            padding: 30px 5% 80px;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -220,17 +148,6 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="{{ route('welcome') }}" class="logo">Home<span>Delivery</span></a>
-        <div class="nav-links">
-            <a href="{{ route('welcome') }}">Inicio</a>
-            <a href="{{ route('ingreso') }}">Ingreso</a>
-            <a href="{{ route('servicios') }}">Servicios</a>
-            <a href="clientes.html">Clientes</a>
-            <a href="faq.html">FAQ</a>
-        </div>
-    </nav>
     
     <!-- Contenido principal -->
     <div class="catalogo-container">
@@ -265,7 +182,7 @@
                             </div>
                         </div>
                         <div class="restaurante-tipo">{{ $restaurante->tipo }}</div>
-                        <a href="{{ route('catalogo.comida.show', $restaurante->id) }}"
+                        <a href="{{ route('restaurantes.show', $restaurante->id) }}"
                            class="restaurante-btn">
                             Ver menú
                         </a>

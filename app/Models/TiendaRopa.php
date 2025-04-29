@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Models\Producto; 
 
-class TiendaTecnologia extends Model
+class TiendaRopa extends Model
 {
     // Si tu tabla no sigue la convención plural automática:
-    protected $table = 'tecnologia';
+    protected $table = 'ropa';
 
     // Campos asignables
     protected $fillable = [

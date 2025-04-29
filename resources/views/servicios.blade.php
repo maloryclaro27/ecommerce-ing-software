@@ -1,3 +1,4 @@
+@extends('layouts.app')
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,84 +7,10 @@
     <title>Nuestros Servicios - Home Delivery</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Estilos base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        /* Navbar (IDÉNTICO AL DE WELCOME) */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 5%;
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff441f;
-        }
-        
-        .logo span {
-            color: #333;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .nav-links a {
-            font-weight: 500;
-            position: relative;
-            padding: 5px 0;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a:hover {
-            color: #ff441f;
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: #ff441f;
-            transition: width 0.3s;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
         
         /* Contenido principal */
         .services-container {
-            padding: 120px 5% 80px; /* Aumenté padding-top para compensar navbar fijo */
+            padding: 30px 5% 80px; /* Aumenté padding-top para compensar navbar fijo */
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -101,7 +28,7 @@
             position: absolute;
             bottom: -15px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(600%); /*raya debajo del titulo */
             width: 80px;
             height: 4px;
             background-color: #ff441f;
@@ -206,17 +133,6 @@
     </style>
 </head>
 <body>
-    <!-- Navbar IDÉNTICO AL DE WELCOME -->
-    <nav class="navbar">
-        <a href="{{ route('welcome') }}" class="logo">Home<span>Delivery</span></a>
-        <div class="nav-links">
-            <a href="{{ route('welcome') }}">Inicio</a>
-            <a href="{{ route('ingreso') }}">Ingreso</a>
-            <a href="{{ route('servicios') }}">Servicios</a>
-            <a href="clientes.html">Clientes</a>
-            <a href="faq.html">FAQ</a>
-        </div>
-    </nav>
     
     <!-- Contenido principal -->
     <div class="services-container">
@@ -281,22 +197,10 @@
                             <span>Cobertura en toda la ciudad</span>
                         </div>
                     </div>
-                    <button class="service-btn">Programar entrega</button>
+                    <a href="{{ route('catalogo') }}" class="service-btn">Más información</a>
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const serviceButtons = document.querySelectorAll('.service-btn');
-            
-            serviceButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    alert('Redirigiendo al formulario de solicitud...');
-                });
-            });
-        });
-    </script>
 </body>
 </html>

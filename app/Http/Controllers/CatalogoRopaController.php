@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tienda;
-use Illuminate\Http\Request;
+use App\Models\TiendaRopa;
 
 class CatalogoRopaController extends Controller
 {
+    /**
+     * Mostrar listado de tiendas de ropa
+     */
     public function index()
     {
-        // Traer todas las tiendas de ropa
-        $tiendas = Tienda::all();
+        $tiendas = TiendaRopa::all();
         return view('catalogo_ropa', compact('tiendas'));
     }
 
+    /**
+     * Mostrar productos de una tienda de ropa
+     */
     public function show($id)
     {
-        // Detalle de una tienda
-        $tienda = Tienda::findOrFail($id);
+        $tienda = TiendaRopa::with('productos')->findOrFail($id);
         return view('tienda_ropa_detalle', compact('tienda'));
     }
 }
-

@@ -1,3 +1,4 @@
+@extends('layouts.app')
 <!DOCTYPE html>
 <!-- Elemento raíz: Define el documento HTML y establece el idioma español. -->
 <html lang="es">
@@ -6,107 +7,24 @@
     <!-- Configuración de vista: Hace que la página sea responsive en dispositivos móviles. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Delivery - Servicio de Mensajería</title>
-    <img src="https://tusitio.com/imagenes/nuevo-logo.png" alt="Nuevo Logo">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Importa la librería de iconos -->
     <style>
-        /* Estilos generales */
-        * {
-            margin: 0;
-            padding: 0; 
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Elimina márgenes y paddings por defecto, establece box sizing y fuente */
-        }
-        
-        body {
-            background-color: #f9f9f9;
-            color: #333; /* Fondo gris claro y texto oscuro */
-        }
-        
-        a {
-            text-decoration: none;
-            color: inherit; /* Subrayado y hereda el color del elemento padre */
-        }
-        
-        /* Navbar */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 5%;
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Fijo en la parte superior, con fondo translúcido y efecto blur. */
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff441f;
-        }
-        
-        .logo span {
-            color: #333; /* Establece el estilo para el texto del logo (HomeDelivery) */
-        }
-        
-        .nav-links {
-            display: flex; /* Barra de enlaces de navegación: Organiza los enlaces en fila (flex) y Espacio de 30px entre cada enlace */
-            gap: 30px;
-        }
-        
-        .nav-links a {
-            font-weight: 500;
-            position: relative;
-            padding: 5px 0;
-            transition: color 0.3s; /* Estilo base de los enlaces:
-                                    Peso de fuente medio (500)
-                                    Posición relativa (para el pseudo-elemento)
-                                    Padding vertical de 5px
-                                    Transición suave de color (0.3 segundos) */
-        }
-        
-        .nav-links a:hover {
-            color: #ff441f; /* Cambia a naranja al pasar el mouse */
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: #ff441f;
-            transition: width 0.3s; /* Subrayado animado:
-                                    Crea un pseudo-elemento (línea inferior)
-                                    Inicialmente invisible (width: 0)
-                                    Posicionado en la parte inferior
-                                    Color naranja */
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%; /* Ancho completo al pasar el mouse */
-        }
-        
+        *
         /* Hero Section */
         .hero {
-            background-color: rgb(255, 68, 31); /* Naranja intenso */
+            background-color: rgb(300, 68, 31); /* Naranja intenso */
             min-height: 80vh; /* 80% del alto de la pantalla */
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 70px; /* Compensa el navbar fijo */
+            margin-top: 0px; /* distancia del background con el navbar */
             position: relative;
             overflow: hidden;
         }
         
         .hero-content {
             text-align: center;
-            color: white;
+            color: white; /*Esto es para la imagen, el titulo y la descripcion */
             z-index: 2; /* Sobre cualquier elemento posicionado */
             padding: 20px;
         }
@@ -145,16 +63,16 @@
             font-size: 2.5rem;
             margin-bottom: 50px;
             color: #333;
+            text-align: center;
             position: relative;
-            display: inline-block;
         }
         
         .section-title::after {
             content: '';
             position: absolute;
-            bottom: -10px;
+            bottom: -15px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(800%); /*raya debajo del titulo */
             width: 80px;
             height: 4px;
             background-color: #ff441f;
@@ -416,17 +334,6 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="{{ route('welcome') }}" class="logo">Home<span>Delivery</span></a>
-        <div class="nav-links">
-            <a href="{{ route('welcome') }}">Inicio</a>
-            <a href="{{ route('ingreso') }}">Ingreso</a>
-            <a href="{{ route('servicios') }}">Servicios</a>
-            <a href="clientes.html">Clientes</a>
-            <a href="faq.html">FAQ</a>
-        </div>
-    </nav>
     
     <!-- Hero Section -->
     <section class="hero">

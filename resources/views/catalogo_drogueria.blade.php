@@ -117,7 +117,7 @@
                                 <i class="fas fa-star"></i> {{ $drogueria->rating }}
                             </div>
                         </div>
-                        <a href="{{ route('catalogo.drogueria.show', $drogueria->id) }}"
+                        <a href="{{ route('droguerias.show', $drogueria->id) }}"
                            class="restaurante-btn">
                             Ver catálogo
                         </a>

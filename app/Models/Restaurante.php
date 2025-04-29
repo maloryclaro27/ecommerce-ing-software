@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Restaurante extends Model
 {
-    // Opcional, sólo si tu tabla no sigue la convención plural:
-    // protected $table = 'restaurantes';
+    // Laravel adivina 'restaurantes' como nombre de tabla, así que no hace falta protected $table
 
     protected $fillable = [
         'nombre',
@@ -15,5 +14,14 @@ class Restaurante extends Model
         'rating',
         'imagen',
     ];
-}
 
+    /**
+     * Relación polimórfica a la tabla 'productos'
+     * Con morphMany en Restaurante enlazamos cada restaurante con sus registros en productos usando 
+     * productable_type = 'App\Models\Restaurante' y productable_id = restaurantes.id
+     */
+    public function productos(): MorphMany
+    {
+        return $this->morphMany(Producto::class, 'productable');
+    }
+}

@@ -290,7 +290,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="name" class="form-label">Nombre Completo</label>
+                    <label for="name" class="form-label">Nombre completo del usuario</label>
                     <input type="text" id="name" class="form-input" placeholder="Juan Pérez" required>
                     <i class="fas fa-user input-icon"></i>
                     <div class="validation-message">El nombre debe tener al menos 3 caracteres</div>

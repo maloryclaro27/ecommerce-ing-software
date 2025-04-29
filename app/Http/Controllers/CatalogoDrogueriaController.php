@@ -3,21 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Drogueria;
-use Illuminate\Http\Request;
 
 class CatalogoDrogueriaController extends Controller
 {
+    /**
+     * Mostrar listado de droguerías
+     */
     public function index()
     {
-        // Traer todas las droguerías
         $droguerias = Drogueria::all();
-
         return view('catalogo_drogueria', compact('droguerias'));
     }
 
+    /**
+     * Mostrar productos de una droguería
+     */
     public function show($id)
     {
-        $drogueria = Drogueria::findOrFail($id);
+        $drogueria = Drogueria::with('productos')
+            ->findOrFail($id);
+        
         return view('drogueria_detalle', compact('drogueria'));
     }
 }
