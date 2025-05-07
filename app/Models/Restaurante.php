@@ -2,7 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Restaurante extends Model
 {
@@ -20,8 +20,8 @@ class Restaurante extends Model
      * Con morphMany en Restaurante enlazamos cada restaurante con sus registros en productos usando 
      * productable_type = 'App\Models\Restaurante' y productable_id = restaurantes.id
      */
-    public function productos(): MorphMany
+    public function productos(): HasMany
     {
-        return $this->morphMany(Producto::class, 'productable');
+        return $this->hasMany(Producto::class, 'restaurante_id');
     }
 }

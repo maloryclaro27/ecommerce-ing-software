@@ -20,11 +20,9 @@ class ProductosRestaurantesController extends Controller
      */
     public function show($id)
     {
-        // Eager-load para evitar consultas N+1
+        // Eager loading de productos
         $restaurante = Restaurante::with('productos')->findOrFail($id);
-
-        // Extraigo los productos en su propia variable
-        $productos = $restaurante->productos;
+        $productos   = $restaurante->productos;
 
         return view('menu_restaurante', compact('restaurante', 'productos'));
     }

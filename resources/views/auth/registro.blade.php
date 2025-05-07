@@ -275,37 +275,42 @@
             <h2 class="illustration-title">¡Únete a Home Delivery!</h2>
             <p class="illustration-text">Regístrate ahora y disfruta de envíos rápidos, descuentos exclusivos y seguimiento en tiempo real.</p>
         </div>
+
+        
         
         <!-- Sección del formulario -->
         <div class="form-section">
             <h1 class="form-title">Crear Cuenta</h1>
             <p class="form-subtitle">Completa tus datos para comenzar</p>
             
-            <form id="registerForm">
+            <form id="registerForm" method="POST" action="{{route('registro.store')}}">
+
+                @csrf
+
                 <div class="form-group">
                     <label for="email" class="form-label">Correo Electrónico</label>
-                    <input type="email" id="email" class="form-input" placeholder="tucorreo@ejemplo.com" required>
+                    <input name="correo_electronico" type="email" id="email" class="form-input" placeholder="tucorreo@ejemplo.com" required>
                     <i class="fas fa-envelope input-icon"></i>
                     <div class="validation-message">Por favor ingresa un correo válido</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="name" class="form-label">Nombre completo del usuario</label>
-                    <input type="text" id="name" class="form-input" placeholder="Juan Pérez" required>
+                    <input name="nombre" type="text" id="name" class="form-input" placeholder="Juan Pérez" required>
                     <i class="fas fa-user input-icon"></i>
                     <div class="validation-message">El nombre debe tener al menos 3 caracteres</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="idNumber" class="form-label">Número de Identificación</label>
-                    <input type="text" id="idNumber" class="form-input" placeholder="1234567890" required>
+                    <input name="identificacion" type="text" id="idNumber" class="form-input" placeholder="1234567890" required>
                     <i class="fas fa-id-card input-icon"></i>
                     <div class="validation-message">Ingresa un número de identificación válido</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="password" class="form-label">Contraseña</label>
-                    <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                    <input name="contrasena" type="password" id="password" class="form-input" placeholder="••••••••" required>
                     <i class="fas fa-lock input-icon"></i>
                     <div class="validation-message">La contraseña debe tener al menos 8 caracteres</div>
                 </div>
@@ -314,9 +319,9 @@
                     <button type="submit" class="submit-btn">
                         <i class="fas fa-user-plus"></i> Registrarse
                     </button>
-                    <p class="login-link">¿Ya tienes una cuenta? <a href="{{ route('login') }}" class="auth-btn login-btn">
+                    <p class="login-link">¿Ya tienes una cuenta? <button type="submit" class="auth-btn login-btn">
                         <i class="fas fa-user-plus"></i> Iniciar sesión
-                    </a></p>
+                    </button></p>
                 </div>
             </form>
         </div>
@@ -324,7 +329,7 @@
 
     <script>
         // Validación en tiempo real
-        document.addEventListener('DOMContentLoaded', function() {
+        /* document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('registerForm');
             const inputs = document.querySelectorAll('.form-input');
             
@@ -333,10 +338,10 @@
                 input.addEventListener('input', function() {
                     validateInput(this);
                 });
-            });
+            }); */
             
             // Validación al enviar el formulario
-            form.addEventListener('submit', function(e) {
+            /* form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 let isValid = true;
                 
@@ -359,10 +364,10 @@
                         </div>
                     `;
                 }
-            });
+            }); */
             
             // Función de validación
-            function validateInput(input) {
+            /* function validateInput(input) {
                 const formGroup = input.parentElement;
                 let isValid = false;
                 
@@ -389,7 +394,7 @@
                 
                 return isValid;
             }
-        });
+        }); */
     </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Producto extends Model
 {
@@ -15,20 +15,19 @@ class Producto extends Model
 
     // Campos asignables
     protected $fillable = [
-        'productable_id',
-        'productable_type',
         'nombre',
         'descripcion',
         'precio',
         'imagen',
+        'restaurante_id'
     ];
 
     /**
      * Relación polimórfica al “dueño” del producto
      */
-    public function productable(): MorphTo
+    public function restaurante(): BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(Restaurante::class, 'restaurante_id');
     }
 }
 
