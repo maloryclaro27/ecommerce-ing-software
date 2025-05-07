@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Producto; 
 
 class TiendaRopa extends Model
@@ -21,8 +21,8 @@ class TiendaRopa extends Model
     /**
      * Relación polimórfica a productos
      */
-    public function productos(): MorphMany
+    public function productos(): HasMany
     {
-        return $this->morphMany(Producto::class, 'productable');
+        return $this->hasMany(Producto::class, 'ropa_id');
     }
 }

@@ -19,7 +19,10 @@ class Producto extends Model
         'descripcion',
         'precio',
         'imagen',
-        'restaurante_id'
+        'restaurante_id',
+        'drogueria_id',
+        'ropa_id',
+        'tecnologia_id'
     ];
 
     /**

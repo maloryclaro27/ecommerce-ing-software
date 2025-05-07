@@ -33,7 +33,7 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             // Redirige al usuario a donde quería ir o al catálogo
-            return redirect()->intended(route('catalogo.comida'));
+            return redirect()->intended(route('welcome'));
         }
 
         // 3) Falló autenticación: volver con error

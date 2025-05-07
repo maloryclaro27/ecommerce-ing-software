@@ -23,13 +23,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-     
-
     
-
-
-      
-
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('restaurante_id')->nullable();
@@ -40,33 +34,7 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        Schema::create('productos_droguerias', function (Blueprint $table) {
-            $table->id();
-            $table->string('nombre', 150);
-            $table->text('descripcion');
-            $table->decimal('precio', 10, 2);
-            $table->string('imagen', 1000)->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('productos_ropa', function (Blueprint $table) {
-            $table->id();
-            $table->string('nombre', 150);
-            $table->text('descripcion');
-            $table->decimal('precio', 10, 2);
-            $table->string('imagen', 1000)->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('productos_tecnologia', function (Blueprint $table) {
-            $table->id();
-            $table->string('nombre', 150);
-            $table->text('descripcion');
-            $table->decimal('precio', 10, 2);
-            $table->string('imagen', 1000)->nullable();
-            $table->timestamps();
-        });
-
+        
         Schema::create('restaurantes', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 50);

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 class Drogueria extends Model
 {
     // Si tu tabla no se llama exactamente 'droguerias', descomenta y ajusta:
@@ -15,8 +15,8 @@ class Drogueria extends Model
         'imagen',
     ];
 
-    public function productos(): MorphMany
+    public function productos(): HasMany
     {
-        return $this->morphMany(Producto::class, 'productable');
+        return $this->hasMany(Producto::class, 'drogueria_id');
     }
 }
