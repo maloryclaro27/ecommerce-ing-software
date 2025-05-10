@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function () {
     // Perfil, puntos y pedidos
     Route::get('/perfil', [UserController::class, 'perfil'])->name('perfil');
     Route::post('/perfil/update', [UserController::class, 'update'])->name('perfil.update');
-    Route::get('/historial-pedidos', [PedidoController::class, 'historial'])->name('historial.pedidos');
+    Route::get('/historial_pedidos', [PedidoController::class, 'historial'])->name('historial.pedidos');
     Route::get('/puntos', [PuntosController::class, 'index'])->name('puntos');
 
     // Catálogos por categoría

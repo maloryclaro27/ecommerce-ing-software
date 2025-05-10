@@ -11,7 +11,7 @@ class PedidoController extends Controller
     {
         $pedidos = Order::where('user_id', Auth::id())
                         ->orderBy('created_at', 'desc')
-                        ->get();
+                        ->paginate(10);
 
         return view('historial_pedidos', compact('pedidos'));
     }

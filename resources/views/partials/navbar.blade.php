@@ -127,10 +127,11 @@
       @auth
           <a href="{{ route('welcome') }}">Inicio</a>
           <a href="{{ route('servicios') }}">Servicios</a>
-
-          <a href="carrito.index" class="nav-cart">
-              <i class="fas fa-shopping-cart"></i>
-          </a>
+          <a href="{{ route('catalogo') }}">Catálogo</a>
+          <a href="{{ route('cart.index') }}" class="nav-cart">
+            <i class="fas fa-shopping-cart"></i>
+        </a>
+        
 
           <div class="dropdown"
                onmouseenter="this.querySelector('.dropdown-menu').style.display='block'"
@@ -138,7 +139,7 @@
               <button>Mi Cuenta</button>
               <div class="dropdown-menu">
                   <a href="perfil">Perfil</a>
-                  <a href="historial.pedidos">Historial de pedidos</a>
+                  <a href="{{ route('historial.pedidos') }}">Historial de pedidos</a>
                   <a href="puntos">Puntos HD</a>
                   <form method="POST" action="{{ route('logout') }}">
                       @csrf

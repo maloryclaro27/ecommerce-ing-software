@@ -8,7 +8,7 @@ use App\Models\ShippingDetail;  // <-- añade esta línea
 
 class Order extends Model
 {
-    protected $fillable = ['user_id','total','shipping_cost','status'];
+    protected $fillable = ['user_id','total','shipping_cost','estado'];
 
     /**
      * Detalle de los ítems de la orden
