@@ -1,84 +1,35 @@
-<!-- resources/views/layouts/app.blade.php -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <title>@yield('title', 'Home Delivery')</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <style>
     /* Reset & Base */
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body {
       background-color: #f9f9f9;
       color: #333;
-      padding-top: 80px; /* deja espacio para la navbar fija */
+      padding-top: 80px; /* espacio para navbar fija */
     }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
+    a { text-decoration: none; color: inherit; }
 
-    /* Navbar (tu CSS original) */
-    .navbar {
-      position: fixed;
-      top: 0; left: 0; width: 100%;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 5%;
-      background-color: rgba(255,255,255,0.9);
-      backdrop-filter: blur(10px);
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .logo {
-      font-size: 24px; font-weight: bold;
-      color: #ff441f;
-      /* quitamos subrayado */
-      text-decoration: none !important;
-    }
-    .logo span { color: #333; }
-    .nav-links {
-      display: flex; gap: 30px;
-    }
-    .nav-links a {
-      font-weight: 500; position: relative; padding: 5px 0;
-      transition: color 0.3s;
-    }
-    .nav-links a:hover { color: #ff441f; }
-    .nav-links a::after {
-      content: ''; position: absolute;
-      bottom: 0; left: 0;
-      width: 0; height: 2px;
-      background-color: #ff441f;
-      transition: width 0.3s;
-    }
-    .nav-links a:hover::after { width: 100%; }
+    /* Navbar */
+    .navbar { /* ... tu CSS ... */ }
 
-    /* Icono carrito en navbar */
-    .nav-links .nav-cart {
-      font-size: 20px; padding: 5px 0;
-    }
-    .nav-links .nav-cart::after {
-      content: ''; position: absolute;
-      bottom: -4px; left: 0;
-      width: 100%; height: 2px;
-      background-color: transparent;
-      transition: background-color 0.3s;
-    }
-    .nav-links .nav-cart:hover::after {
-      background-color: #ff441f;
-    }
-
-    /* Contenedor principal */
-    .catalogo-container {
-      padding: 20px 5% 80px;  /* arriba el padding-top lo gestiona body */
+    /* Contenedor principal, ahora más genérico */
+    .main-container {
+      padding: 20px 5% 80px;
       max-width: 1200px;
       margin: 0 auto;
     }
+
+    /* Títulos secciones */
     .section-title {
       font-size: 2.5rem;
       margin-bottom: 30px;
@@ -96,27 +47,62 @@
 </head>
 <body>
 
-  {{-- aquí se inyecta tu partial con el HTML de la navbar --}}
+  {{-- Navbar --}}
   @include('partials.navbar')
 
-  {{-- el contenido específico de cada vista --}}
-  <main class="catalogo-container">
+  {{-- Mensajes flash / errores --}}
+  <main class="main-container">
+    {{-- FLASH MESSAGE --}}
+    @if(session('status'))
+      <div
+        id="flash-message"
+        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6"
+        role="alert"
+      >
+        {{ session('status') }}
+      </div>
+      <script>
+        // Espera 3 segundos y oculta/elimina el mensaje
+        setTimeout(() => {
+          const flash = document.getElementById('flash-message');
+          if (flash) {
+            // opcional: animar opacidad antes de eliminar
+            flash.style.transition = 'opacity 0.5s';
+            flash.style.opacity = '0';
+            setTimeout(() => flash.remove(), 500);
+          }
+        }, 3000);
+      </script>
+    @endif
+  
+    @if($errors->any())
+      {{-- ... tu bloque de errores ... --}}
+    @endif
+  
     @yield('content')
   </main>
 
+  {{-- JS global (opcional: elimina o ajusta) --}}
   <script>
-    // JS global: función para agregar productos al carrito
+    // Si ya no usas /agregar-al-carrito/{id}, elimina esta función
     function agregarAlCarrito(idProducto) {
-      fetch(`/agregar-al-carrito/${idProducto}`, {
+      fetch(`/cart`, {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
-          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ producto_id: idProducto /*, establecimiento_* campos... */ })
       })
-      .then(r => r.ok ? alert('👍 Agregado al carrito') : alert('❌ Error al agregar'))
+      .then(r => r.ok
+             ? alert('👍 Agregado al carrito')
+             : alert('❌ Error al agregar'))
       .catch(() => alert('❌ Error de conexión'));
     }
   </script>
+
+  {{-- Scripts específicos de cada vista --}}
+  @stack('scripts')
 </body>
 </html>

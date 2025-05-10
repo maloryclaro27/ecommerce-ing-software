@@ -24,6 +24,15 @@ class ProductosRestaurantesController extends Controller
         $restaurante = Restaurante::with('productos')->findOrFail($id);
         $productos   = $restaurante->productos;
 
-        return view('menu_restaurante', compact('restaurante', 'productos'));
+        // Pasamos el contexto del establecimiento
+        $establecimientoId   = $restaurante->id;
+        $establecimientoTipo = 0; // 0 = Restaurante
+
+        return view('menu_restaurante', compact(
+            'restaurante',
+            'productos',
+            'establecimientoId',
+            'establecimientoTipo'
+        ));
     }
 }

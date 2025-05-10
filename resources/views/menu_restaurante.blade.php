@@ -141,12 +141,18 @@
         <div class="producto-info">
           <h3>{{ $producto->nombre }}</h3>
           <p class="producto-precio">${{ number_format($producto->precio, 0, ',', '.') }}</p>
-          <form action="carrito.agregar" method="POST">
+          
+          <form action="{{ route('cart.store') }}" method="POST" class="mt-4">
             @csrf
             <input type="hidden" name="producto_id" value="{{ $producto->id }}">
-            <button type="submit" class="btn-agregar">Agregar al carrito</button>
+            <input type="hidden" name="establecimiento_id" value="{{ $establecimientoId }}">
+            <input type="hidden" name="establecimiento_tipo" value="{{ $establecimientoTipo }}">
+            <button type="submit" class="btn-agregar">
+              <i class="fas fa-cart-plus"></i> Agregar al carrito
+            </button>
           </form>
         </div>
+        
         <div class="producto-descripcion">
           {{ $producto->descripcion }}
         </div>
@@ -155,7 +161,7 @@
   </div>
 
   <div class="cart-button-wrapper">
-    <a href="carrito.index" class="btn-carrito">
+    <a href="{{ route('cart.index') }}" class="btn-carrito">
       <i class="fas fa-shopping-cart"></i> Ver carrito
     </a>
   </div>

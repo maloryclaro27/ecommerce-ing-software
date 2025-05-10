@@ -12,6 +12,8 @@ use App\Http\Controllers\ProductosDrogueriasController;
 use App\Http\Controllers\ProductosRopaController;
 use App\Http\Controllers\ProductosTecnologiaController;
 use App\Http\Controllers\ServiciosController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use Illuminate\Support\Facades\Route;
 
 // Páginas públicas
@@ -83,4 +85,19 @@ Route::middleware('auth')->group(function () {
          ->name('tecnologia.index');
     Route::get('tecnologia/{id}', [ProductosTecnologiaController::class, 'show'])
          ->name('tecnologia.show');
+     Route::middleware('auth')->group(function () {
+     Route::post('/cart', [CartController::class,'store'])->name('cart.store');
+     Route::get('/cart',  [CartController::class,'index'])->name('cart.index');
+     Route::delete('/cart/{item}', [CartController::class, 'destroy'])
+         ->name('cart.destroy');
+     Route::post('/checkout', [CheckoutController::class, 'store'])
+         ->name('checkout.store');
+     Route::get('/checkout/{order}', [CheckoutController::class, 'show'])
+         ->name('checkout.show');
+     Route::post('/checkout/{order}', [CheckoutController::class,'process'])
+         ->name('checkout.process');
+     Route::get('/pago_realizado/{order}', [CheckoutController::class,'done'])
+         ->name('checkout.done');
+ });
+ 
 });

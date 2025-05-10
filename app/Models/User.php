@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\CartItem;
+
 
 class User extends Authenticatable
 {
@@ -53,4 +55,15 @@ class User extends Authenticatable
     {
         return 'token_recordarme';
     }
+
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class, 'user_id');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id');
+    }
+
 }
