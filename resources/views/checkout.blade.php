@@ -1,3 +1,4 @@
+{{-- resources/views/checkout.blade.php --}}
 @extends('layouts.app')
 
 @section('content')
@@ -92,6 +93,36 @@
                     @enderror
                 </div>
 
+                <!-- Canjear puntos -->
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-[#ff441f]">
+                  Puntos de Fidelización (1 punto = $1)
+                </h2>
+                <div class="mb-6">
+                  <p class="mb-2">Tienes disponibles <strong>{{ auth()->user()->loyalty_points }}</strong> puntos.</p>
+                  <label for="use_points" class="block mb-1">¿Cuántos puntos quieres usar?</label>
+                  @php
+                    $maxCanje = min(
+                      intdiv(auth()->user()->loyalty_points, 1000) * 1000,
+                      intdiv(($order->total - $order->shipping_cost), 1000) * 1000
+                    );
+                  @endphp
+                  <select name="use_points" id="use_points" class="w-full px-3 py-2 border rounded mb-2">
+                    <option value="0">0 (no usar puntos)</option>
+                    @for($pts = 1000; $pts <= $maxCanje; $pts += 1000)
+                      <option value="{{ $pts }}" {{ old('use_points') == $pts ? 'selected' : '' }}>
+                        {{ $pts }} puntos (ahorras ${{ number_format($pts,0,',','.') }})
+                      </option>
+                    @endfor
+                  </select>
+                  @error('use_points')
+                    <p class="text-red-600 text-sm">{{ $message }}</p>
+                  @enderror
+                </div>
+
+                <!-- Ocultos para controlador -->
+                <input type="hidden" name="subtotal" value="{{ $order->total - $order->shipping_cost }}">
+                <input type="hidden" name="shipping_cost" value="{{ $order->shipping_cost }}">
+
                 <!-- Resumen -->
                 <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-[#ff441f]">Resumen de Compra</h2>
                 <div class="bg-gray-50 p-4 rounded-md mb-6">
@@ -104,8 +135,8 @@
                         <span class="font-medium">${{ number_format($order->shipping_cost, 2, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
-                        <span class="text-gray-800">Total:</span>
-                        <span class="text-[#ff441f]">${{ number_format($order->total, 2, ',', '.') }}</span>
+                        <span class="text-gray-800">Total antes de puntos:</span>
+                        <span>${{ number_format($order->total, 2, ',', '.') }}</span>
                     </div>
                 </div>
 

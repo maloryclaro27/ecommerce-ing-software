@@ -28,12 +28,12 @@ class CheckoutController extends Controller
         // Envío = 10% del subtotal
         $shippingCost = round($subtotal * 0.10, 2);
 
-        // Total = subtotal + envío
-        $total = $subtotal + $shippingCost;
+        // Total antes de puntos (subtotal + envío)
+        $totalBeforePoints = $subtotal + $shippingCost;
 
-        // 1) Crear la orden
+        // 1) Crear la orden con total provisional
         $order = $user->orders()->create([
-            'total'         => $total,
+            'total'         => $totalBeforePoints,
             'shipping_cost' => $shippingCost,
             'status'        => 'pending',
         ]);
@@ -62,7 +62,6 @@ class CheckoutController extends Controller
      */
     public function show(Order $order)
     {
-        // Verifica que la orden pertenezca al usuario autenticado
         if ($order->user_id !== Auth::id()) {
             abort(403);
         }
@@ -72,8 +71,8 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Paso 3: Valida y guarda los datos de envío, marca la orden
-     * como pagada, y redirige a la confirmación de pago.
+     * Paso 3: Valida y guarda los datos de envío, aplica puntos,
+     * marca la orden como pagada, y redirige a la confirmación.
      */
     public function process(Request $request, Order $order)
     {
@@ -85,15 +84,48 @@ class CheckoutController extends Controller
             'direccion'      => 'required|string|max:255',
             'telefono'       => 'required|string|max:20',
             'payment_method' => 'required|in:tarjeta,transferencia,contraentrega',
+            'use_points'     => 'required|integer|min:0',
+            'subtotal'       => 'required|numeric',
+            'shipping_cost'  => 'required|numeric',
         ]);
 
-        // Guarda los detalles de envío/pago
-        $order->shippingDetail()->create($data);
+        $user = Auth::user();
 
-        // Marca la orden como pagada
-        $order->update(['status' => 'paid']);
+        // Determina puntos canjeables (múltiplos de 1000)
+        $available    = $user->loyalty_points;
+        $maxCanjeable = intdiv($available, 1000) * 1000;
+        $usePoints    = min($data['use_points'], $maxCanjeable, $data['subtotal']);
 
-        // Redirige a la vista de pago realizado
+        // Calcula total neto tras canje de puntos
+        $netTotal = $data['subtotal'] + $data['shipping_cost'] - $usePoints;
+
+        // 1) Guarda detalles de envío/pago
+        $order->shippingDetail()->create([
+            'direccion'      => $data['direccion'],
+            'telefono'       => $data['telefono'],
+            'payment_method' => $data['payment_method'],
+        ]);
+
+        // 2) Actualiza la orden
+        $order->update([
+            'status'        => 'paid',
+            'total'         => $netTotal,
+            'shipping_cost' => $data['shipping_cost'],
+        ]);
+
+        // 3) Ajusta puntos del usuario:
+        //    resta los usados y suma los ganados (50puntos cada 1000 pagados)
+        $earned = intdiv($netTotal, 1000) * 50;
+        $user->loyalty_points = $available - $usePoints + $earned;
+        $user->save();
+
+        // 4) Guarda en sesión los puntos usados y ganados para mostrar
+        session([
+            'loyalty_used'   => $usePoints,
+            'loyalty_earned' => $earned,
+        ]);
+
+        // 5) Redirige a la vista de pago realizado
         return redirect()->route('checkout.done', $order->id);
     }
 

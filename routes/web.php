@@ -96,6 +96,8 @@ Route::middleware('auth')->group(function () {
          ->name('checkout.show');
      Route::post('/checkout/{order}', [CheckoutController::class,'process'])
          ->name('checkout.process');
+     Route::view('/monitoreo-pedido', 'monitoreo_pedido_tienda')
+         ->name('monitoreo.pedido');
      Route::get('/pago_realizado/{order}', [CheckoutController::class,'done'])
          ->name('checkout.done');
  });
