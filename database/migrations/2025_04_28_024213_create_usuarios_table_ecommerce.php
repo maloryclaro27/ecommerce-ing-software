@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('contrasena')->comment('Contraseña cifrada');
             $table->rememberToken('token_recordarme')
                   ->comment('Token para “recordarme” en sesiones');
+            $table->string('telefono')->nullable();
+            $table->string('direccion')->nullable();
             $table->timestamp('creado_en')
                   ->useCurrent()
                   ->comment('Fecha de creación del registro');

@@ -27,6 +27,8 @@ class User extends Authenticatable
         'fecha_verificacion_correo',
         'token_recordarme',
         'loyalty_points',
+        'telefono',    
+        'direccion',
     ];
 
     // Campos que no deben verse en arrays o JSON
