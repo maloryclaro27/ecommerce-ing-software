@@ -10,10 +10,10 @@ use App\Models\ShippingDetail;
 class CheckoutController extends Controller
 {
     /**
-     * Paso 1: Crea la orden y sus order_items, vacía el carrito,
-     * y redirige al formulario de datos de envío.
+     * Paso 1: Crea la orden (con envío), sus order_items, vacía el carrito
+     * y redirige al formulario de captura de envío/pago.
      */
-    public function store()
+    public function store(Request $request)
     {
         $user      = Auth::user();
         $cartItems = $user->cartItems()->with('producto')->get();
@@ -22,16 +22,23 @@ class CheckoutController extends Controller
             return back()->withErrors('Tu carrito está vacío.');
         }
 
-        // Calcula el total
-        $total = $cartItems->sum(fn($ci) => $ci->producto->precio * $ci->cantidad);
+        // Calcula subtotal
+        $subtotal = $cartItems->sum(fn($ci) => $ci->producto->precio * $ci->cantidad);
 
-        // 1) Crea la orden
+        // Envío = 10% del subtotal
+        $shippingCost = round($subtotal * 0.10, 2);
+
+        // Total = subtotal + envío
+        $total = $subtotal + $shippingCost;
+
+        // 1) Crear la orden
         $order = $user->orders()->create([
-            'total'  => $total,
-            'status' => 'pending',
+            'total'         => $total,
+            'shipping_cost' => $shippingCost,
+            'status'        => 'pending',
         ]);
 
-        // 2) Crea los order_items
+        // 2) Crear los order_items
         foreach ($cartItems as $ci) {
             $order->items()->create([
                 'producto_id'         => $ci->producto_id,
@@ -42,20 +49,20 @@ class CheckoutController extends Controller
             ]);
         }
 
-        // 3) Vacía el carrito
+        // 3) Vaciar el carrito
         $user->cartItems()->delete();
 
-        // 4) Redirige al formulario de envío/pago
+        // 4) Redirigir al formulario de envío/pago
         return redirect()->route('checkout.show', $order->id);
     }
 
     /**
      * Paso 2: Muestra el formulario para capturar dirección,
-     * teléfono y método de pago.
+     * teléfono y método de pago, con datos de usuario precargados.
      */
     public function show(Order $order)
     {
-        // Opcional: verifica que el usuario sea dueño de la orden
+        // Verifica que la orden pertenezca al usuario autenticado
         if ($order->user_id !== Auth::id()) {
             abort(403);
         }
@@ -66,7 +73,7 @@ class CheckoutController extends Controller
 
     /**
      * Paso 3: Valida y guarda los datos de envío, marca la orden
-     * como pagada, y redirige a la confirmación.
+     * como pagada, y redirige a la confirmación de pago.
      */
     public function process(Request $request, Order $order)
     {
@@ -86,6 +93,7 @@ class CheckoutController extends Controller
         // Marca la orden como pagada
         $order->update(['status' => 'paid']);
 
+        // Redirige a la vista de pago realizado
         return redirect()->route('checkout.done', $order->id);
     }
 

@@ -1,63 +1,137 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-lg mx-auto p-6 bg-white rounded shadow">
-  <h1 class="text-2xl font-bold mb-4">Datos de Envío y Pago</h1>
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto">
+        <!-- Encabezado con progreso -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Finalizar Compra</h1>
+            <div class="flex items-center justify-between">
+                <!-- Paso 1: Carrito -->
+                <div class="flex items-center text-[#ff441f]">
+                    <span class="flex items-center justify-center w-8 h-8 bg-[#ff441f] rounded-full text-white mr-2">1</span>
+                    <span>Carrito</span>
+                </div>
+                <div class="flex-1 h-1 bg-[#ff441f] mx-2"></div>
+                <!-- Paso 2: Datos de Envío -->
+                <div class="flex items-center text-[#ff441f] font-medium">
+                    <span class="flex items-center justify-center w-8 h-8 bg-[#ff441f] rounded-full text-white mr-2">2</span>
+                    <span>Datos de Envío</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2"></div>
+                <!-- Paso 3: Pago -->
+                <div class="flex items-center text-gray-400">
+                    <span class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full mr-2">3</span>
+                    <span>Pago</span>
+                </div>
+            </div>
+        </div>
 
-  <form action="{{ route('checkout.process', $order->id) }}" method="POST">
-    @csrf
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <form action="{{ route('checkout.process', $order->id) }}" method="POST" class="p-6">
+                @csrf
 
-    {{-- Nombre --}}
-    <label class="block mb-2">Nombre completo</label>
-    <input type="text" 
-           value="{{ $user->nombre }}" 
-           disabled 
-           class="w-full border px-3 py-2 mb-4 rounded" />
+                <h2 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b border-[#ff441f]">Información de Contacto</h2>
 
-    {{-- Correo --}}
-    <label class="block mb-2">Correo electrónico</label>
-    <input type="email" 
-           value="{{ $user->correo_electronico }}" 
-           disabled 
-           class="w-full border px-3 py-2 mb-4 rounded" />
+                <!-- Datos del usuario -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+                        <div class="bg-gray-50 p-3 rounded-md border border-gray-200 text-gray-600">
+                            {{ $user->nombre }}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+                        <div class="bg-gray-50 p-3 rounded-md border border-gray-200 text-gray-600">
+                            {{ $user->correo_electronico }}
+                        </div>
+                    </div>
+                </div>
 
-    {{-- Identificación --}}
-    <label class="block mb-2">N° de identificación</label>
-    <input type="text" 
-           value="{{ $user->identificacion }}" 
-           disabled 
-           class="w-full border px-3 py-2 mb-4 rounded" />
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">N° de identificación</label>
+                        <div class="bg-gray-50 p-3 rounded-md border border-gray-200 text-gray-600">
+                            {{ $user->identificacion }}
+                        </div>
+                    </div>
+                    <div>
+                        <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono de contacto*</label>
+                        <input type="text" id="telefono" name="telefono" value="{{ old('telefono') }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#ff441f] focus:border-[#ff441f]">
+                        @error('telefono')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
 
-    {{-- Dirección --}}
-    <label class="block mb-2">Dirección de entrega</label>
-    <input type="text" 
-           name="direccion" 
-           value="{{ old('direccion') }}" 
-           required 
-           class="w-full border px-3 py-2 mb-4 rounded" />
+                <!-- Dirección -->
+                <h2 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b border-[#ff441f]">Dirección de Envío</h2>
+                <div class="mb-6">
+                    <label for="direccion" class="block text-sm font-medium text-gray-700 mb-1">Dirección completa*</label>
+                    <input type="text" id="direccion" name="direccion" value="{{ old('direccion') }}" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#ff441f] focus:border-[#ff441f]">
+                    @error('direccion')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-    {{-- Teléfono --}}
-    <label class="block mb-2">Teléfono de contacto</label>
-    <input type="text" 
-           name="telefono" 
-           value="{{ old('telefono') }}" 
-           required 
-           class="w-full border px-3 py-2 mb-4 rounded" />
+                <!-- Método de pago -->
+                <h2 class="text-xl font-semibold text-gray-800 mb-6 pb-2 border-b border-[#ff441f]">Método de Pago</h2>
+                <div class="mb-8">
+                    <select name="payment_method" id="payment_method" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#ff441f] focus:border-[#ff441f]">
+                        <option value="">-- Selecciona un método de pago --</option>
+                        <option value="tarjeta" {{ old('payment_method') == 'tarjeta' ? 'selected' : '' }}>Tarjeta crédito/débito</option>
+                        <option value="transferencia" {{ old('payment_method') == 'transferencia' ? 'selected' : '' }}>Transferencia bancaria</option>
+                        <option value="contraentrega" {{ old('payment_method') == 'contraentrega' ? 'selected' : '' }}>Pago contra entrega</option>
+                    </select>
+                    @error('payment_method')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-    {{-- Método de pago --}}
-    <label class="block mb-2">Método de pago</label>
-    <select name="payment_method" required
-            class="w-full border px-3 py-2 mb-6 rounded">
-      <option value="">-- Selecciona uno --</option>
-      <option value="tarjeta">Tarjeta crédito/débito</option>
-      <option value="transferencia">Transferencia bancaria</option>
-      <option value="contraentrega">Pago contra entrega</option>
-    </select>
+                <!-- Resumen -->
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-[#ff441f]">Resumen de Compra</h2>
+                <div class="bg-gray-50 p-4 rounded-md mb-6">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Subtotal:</span>
+                        <span class="font-medium">${{ number_format($order->total - $order->shipping_cost, 2, ',', '.') }}</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Envío (10%):</span>
+                        <span class="font-medium">${{ number_format($order->shipping_cost, 2, ',', '.') }}</span>
+                    </div>
+                    <div class="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
+                        <span class="text-gray-800">Total:</span>
+                        <span class="text-[#ff441f]">${{ number_format($order->total, 2, ',', '.') }}</span>
+                    </div>
+                </div>
 
-    <button type="submit"
-            class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
-      Realizar pago
-    </button>
-  </form>
+                <!-- Botón de pago -->
+                <button type="submit"
+                        class="w-full bg-[#ff441f] text-white py-3 px-4 rounded-md hover:bg-[#e03d1c] transition duration-200 flex items-center justify-center">
+                    Realizar pago
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+    select:focus, input:focus {
+        transition: all 0.2s ease;
+        box-shadow: 0 0 0 3px rgba(255, 68, 31, 0.2);
+    }
+    button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(255, 68, 31, 0.3), 0 2px 4px -1px rgba(255, 68, 31, 0.08);
+    }
+</style>
+@endpush
