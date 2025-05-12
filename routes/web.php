@@ -44,6 +44,7 @@ Route::post('/logout', function () {
 
 // Catálogo genérico (público)
 Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo');
+Route::view('/domicilios_programados', 'domicilios_programados')->name('domicilios_programados');
 
 // RUTAS PROTEGIDAS
 Route::middleware('auth')->group(function () {

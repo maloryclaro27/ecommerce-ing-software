@@ -29,7 +29,7 @@ class CartController extends Controller
             && ($existing->establecimiento_id != $request->establecimiento_id
                 || $existing->establecimiento_tipo != $request->establecimiento_tipo)
         ) {
-            return back()->withErrors('Solo puedes agregar productos de un mismo local por pedido.');
+            return back()->with('alerta', 'Solo puedes agregar productos de un mismo local por pedido.');
         }
 
         // Crear o actualizar cantidad

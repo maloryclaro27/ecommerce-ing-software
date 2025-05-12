@@ -130,7 +130,33 @@
       background: #1f8a4b;
       transform: translateY(-2px);
     }
+
+    .alerta {
+      background-color: #ffe0e0;
+      color: #a94442;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 600px;
+      text-align: center;
+      border: 1px solid #f5c6cb;
+      border-radius: 10px;
+    }
   </style>
+
+  {{-- 🔔 MENSAJE DE ERROR SI SE INTENTA AGREGAR PRODUCTOS DE OTRO LOCAL --}}
+@if (session('alerta'))
+<script>
+  window.onload = function () {
+    alert("{{ session('alerta') }}");
+
+      // Elimina el mensaje de la sesión en el historial
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href);
+    }
+  }
+</script>
+@endif
+
 
   <h1 class="section-title">Menú de {{ $restaurante->nombre }}</h1>
 
@@ -141,7 +167,7 @@
         <div class="producto-info">
           <h3>{{ $producto->nombre }}</h3>
           <p class="producto-precio">${{ number_format($producto->precio, 0, ',', '.') }}</p>
-          
+
           <form action="{{ route('cart.store') }}" method="POST" class="mt-4">
             @csrf
             <input type="hidden" name="producto_id" value="{{ $producto->id }}">
@@ -152,7 +178,7 @@
             </button>
           </form>
         </div>
-        
+
         <div class="producto-descripcion">
           {{ $producto->descripcion }}
         </div>

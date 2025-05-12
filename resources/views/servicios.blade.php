@@ -197,7 +197,7 @@
                             <span>Cobertura en toda la ciudad</span>
                         </div>
                     </div>
-                    <a href="{{ route('catalogo') }}" class="service-btn">Más información</a>
+                    <a href="{{ route('domicilios_programados') }}" class="service-btn">Más información</a>
                 </div>
             </div>
         </div>

@@ -160,7 +160,7 @@
     }
 
     .continue-btn {
-        padding: 12px 25px;
+        padding: 10px 20px;
         background-color: white;
         color: #ff441f;
         border: 2px solid #ff441f;
@@ -170,6 +170,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        text-decoration: none;
     }
 
     .continue-btn:hover {
@@ -180,7 +181,7 @@
     }
 
     .checkout-btn {
-        padding: 12px 25px;
+        padding: 10px 20px;
         background-color: #ff441f;
         color: white;
         border: 2px solid #ff441f;
@@ -237,7 +238,7 @@
         .price-info {
             text-align: left;
             width: 100%;
-            padding-left: 100px; /* Alineación con el texto */
+            padding-left: 100px;
         }
 
         .action-buttons {
@@ -280,7 +281,6 @@
                 </p>
               </div>
   
-              {{-- Botón “-1 unidad” --}}
               <button
                 class="remove-btn"
                 onclick="removeItem({{ $item->id }})"
@@ -305,7 +305,6 @@
               Seguir comprando
             </a>
   
-            {{-- Form oculto para checkout --}}
             <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST" class="hidden">
               @csrf
             </form>
@@ -318,44 +317,49 @@
       </div>
     @else
       <div class="empty-cart">
+        <div class="empty-cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
         <h2>Tu carrito está vacío</h2>
-        <a href="{{ url()->previous() }}" class="continue-btn">
-          Seguir comprando
-        </a>
+        <p>Parece que no has agregado ningún producto aún</p>
+        <div style="margin-top: 20px;">
+            <a href="{{ url()->previous() }}" class="continue-btn">
+                Seguir comprando
+            </a>
+        </div>
       </div>
     @endif
-  </div>
-  @endsection
+</div>
+@endsection
   
-  @push('scripts')
-  <script>
+@push('scripts')
+<script>
     // Base URL para DELETE
     const deleteUrlBase = "{{ url('cart') }}/";
     const csrfToken      = document.querySelector('meta[name="csrf-token"]').content;
   
     function removeItem(itemId) {
-      if (!confirm('¿Seguro que quieres eliminar una unidad de este producto?')) return;
-  
-      fetch(deleteUrlBase + itemId, {
-        method: 'DELETE',
-        credentials: 'same-origin',
-        headers: {
-          'X-CSRF-TOKEN': csrfToken,
-          'Accept':       'application/json'
-        }
-      })
-      .then(res => {
-        if (!res.ok) throw new Error('Error en la petición');
-        return res;  // res.status 204
-      })
-      .then(() => {
-        // Recarga la página para reflejar decremento o eliminación
-        window.location.reload();
-      })
-      .catch(err => {
-        console.error(err);
-        alert('No se pudo eliminar el producto. Intenta de nuevo.');
-      });
+        if (!confirm('¿Seguro que quieres eliminar una unidad de este producto?')) return;
+    
+        fetch(deleteUrlBase + itemId, {
+            method: 'DELETE',
+            credentials: 'same-origin',
+            headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept':       'application/json'
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Error en la petición');
+            return res;
+        })
+        .then(() => {
+            window.location.reload();
+        })
+        .catch(err => {
+            console.error(err);
+            alert('No se pudo eliminar el producto. Intenta de nuevo.');
+        });
     }
-  </script>
-  @endpush
+</script>
+@endpush
