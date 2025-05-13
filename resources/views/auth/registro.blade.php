@@ -267,6 +267,14 @@
         }
     </style>
 </head>
+<script>
+    function mostrarCamposNegocio() {
+        const rol = document.getElementById('rol').value;
+        const campos = document.getElementById('campos-negocio');
+        campos.style.display = rol === 'dueno' ? 'block' : 'none';
+    }
+</script>
+
 <body>
     <div class="register-container">
         <!-- Sección de ilustración -->
@@ -314,6 +322,35 @@
                     <i class="fas fa-lock input-icon"></i>
                     <div class="validation-message">La contraseña debe tener al menos 8 caracteres</div>
                 </div>
+
+                <div class="form-group">
+                    <label for="rol" class="form-label">Rol</label>
+                    <select name="rol" id="rol" class="form-input" required onchange="mostrarCamposNegocio()">
+                        <option value="">Selecciona un rol</option>
+                        <option value="cliente">Cliente</option>
+                        <option value="dueno">Dueño de negocio</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                
+                <div id="campos-negocio" style="display: none;">
+                    <div class="form-group">
+                        <label for="categoria" class="form-label">Categoría del negocio</label>
+                        <select name="categoria_negocio" id="categoria" class="form-input">
+                            <option value="">Selecciona una categoría</option>
+                            <option value="comida">Comida</option>
+                            <option value="drogueria">Droguería</option>
+                            <option value="ropa">Ropa</option>
+                            <option value="tecnologia">Tecnología</option>
+                        </select>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="nombre_negocio" class="form-label">Nombre del negocio</label>
+                        <input type="text" name="nombre_negocio" id="nombre_negocio" class="form-input" placeholder="Ej: Farmacia Central">
+                    </div>
+                </div>
+                
                 
                 <div class="form-footer">
                     <button type="submit" class="submit-btn">

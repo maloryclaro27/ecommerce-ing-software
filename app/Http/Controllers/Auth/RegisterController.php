@@ -25,6 +25,9 @@ class RegisterController extends Controller
             'correo_electronico'        => 'required|string|email|max:255|unique:usuarios,correo_electronico',
             'contrasena'                => 'required|string|min:6',
             'identificacion'  => 'required|string|max:20',
+            'rol'                 => 'required|in:cliente,dueno,admin',
+            'categoria_negocio'   => 'required_if:rol,dueno',
+            'nombre_negocio'      => 'required_if:rol,dueno|string|max:255',
         ]);
 
         $user = User::create([
@@ -32,6 +35,9 @@ class RegisterController extends Controller
             'correo_electronico' => $datos['correo_electronico'],
             'contrasena'         => Hash::make($datos['contrasena']),
             'identificacion' => $datos['identificacion'],
+            'rol'                => $datos['rol'],
+            'categoria_negocio'  => $datos['rol'] === 'dueno' ? $datos['categoria_negocio'] : null,
+            'nombre_negocio'     => $datos['rol'] === 'dueno' ? $datos['nombre_negocio'] : null,
         ]);
 
          // Autenticar al usuario recién creado

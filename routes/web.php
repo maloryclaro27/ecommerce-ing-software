@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CatalogoController;
@@ -17,8 +19,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\PuntosController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NegocioController;
+use App\Http\Controllers\AdminController;
 
 // Páginas públicas
 Route::view('/', 'welcome')->name('welcome');
@@ -90,4 +92,24 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/{order}', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::view('/monitoreo-pedido', 'monitoreo_pedido_tienda')->name('monitoreo.pedido');
     Route::get('/pago_realizado/{order}', [CheckoutController::class, 'done'])->name('checkout.done');
+
+    // ===============================
+    // NUEVAS RUTAS PARA DUEÑOS
+    // ===============================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/mi-negocio', [NegocioController::class, 'catalogo'])->name('negocio.catalogo');
+    Route::get('/mi-negocio/estadisticas', [NegocioController::class, 'estadisticas'])->name('negocio.estadisticas');
+    Route::get('/mi-negocio/configuracion', [NegocioController::class, 'configuracion'])->name('negocio.configuracion');
+    Route::get('/mi-negocio/domicilios', [NegocioController::class, 'domicilios'])->name('negocio.domicilios');
+    Route::post('/business/{id}/products', [NegocioController::class, 'store']);
+    Route::put('/business/{id}/products/{productId}', [NegocioController::class, 'update']);
+    Route::delete('/business/{id}/products/{productId}', [NegocioController::class, 'destroy']);
+    });
+
+
+
+    // ===============================
+    // RUTA PARA ADMINISTRADOR
+    // ===============================
+    Route::get('/admin/drones', [AdminController::class, 'monitoreoDrones'])->name('admin.drones');
 });

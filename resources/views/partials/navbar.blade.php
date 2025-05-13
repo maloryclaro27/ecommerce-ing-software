@@ -114,39 +114,68 @@
 </style>
 
 <nav class="navbar">
-  <a href="{{ route('welcome') }}" class="logo">Home<span>Delivery</span></a>
-
-  <div class="nav-links">
-      @guest
-          <a href="{{ route('welcome') }}">Inicio</a>
-          <a href="{{ route('login') }}">Servicios</a>
-          <a href="{{ route('informacion') }}">FAQ</a>
-          <a href="{{ route('login') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Iniciar Sesión</a>
-      @endguest
-
-      @auth
-          <a href="{{ route('welcome') }}">Inicio</a>
-          <a href="{{ route('servicios') }}">Servicios</a>
-          <a href="{{ route('catalogo') }}">Catálogo</a>
-          <a href="{{ route('cart.index') }}" class="nav-cart">
-            <i class="fas fa-shopping-cart"></i>
-        </a>
-        
-
-          <div class="dropdown"
-               onmouseenter="this.querySelector('.dropdown-menu').style.display='block'"
-               onmouseleave="this.querySelector('.dropdown-menu').style.display='none'">
-              <button>Mi Cuenta</button>
-              <div class="dropdown-menu">
-                  <a href="perfil">Perfil</a>
-                  <a href="{{ route('historial.pedidos') }}">Historial de pedidos</a>
-                  <a href="puntos">Puntos HD</a>
-                  <form method="POST" action="{{ route('logout') }}">
-                      @csrf
-                      <button type="submit">Cerrar sesión</button>
-                  </form>
-              </div>
-          </div>
-      @endauth
-  </div>
-</nav>
+    <a href="{{ route('welcome') }}" class="logo">Home<span>Delivery</span></a>
+  
+    <div class="nav-links">
+        @guest
+            <a href="{{ route('welcome') }}">Inicio</a>
+            <a href="{{ route('login') }}">Servicios</a>
+            <a href="{{ route('informacion') }}">FAQ</a>
+            <a href="{{ route('login') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Iniciar Sesión</a>
+        @endguest
+  
+        @auth
+            {{-- Verificación por ROL --}}
+            @if (Auth::user()->rol === 'cliente')
+                <a href="{{ route('welcome') }}">Inicio</a>
+                <a href="{{ route('servicios') }}">Servicios</a>
+                <a href="{{ route('catalogo') }}">Catálogo</a>
+                <a href="{{ route('cart.index') }}" class="nav-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+  
+                <div class="dropdown"
+                     onmouseenter="this.querySelector('.dropdown-menu').style.display='block'"
+                     onmouseleave="this.querySelector('.dropdown-menu').style.display='none'">
+                    <button>Mi Cuenta</button>
+                    <div class="dropdown-menu">
+                        <a href="{{ route('perfil') }}">Perfil</a>
+                        <a href="{{ route('historial.pedidos') }}">Historial de pedidos</a>
+                        <a href="{{ route('puntos') }}">Puntos HD</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit">Cerrar sesión</button>
+                        </form>
+                    </div>
+                </div>
+  
+            @elseif (Auth::user()->rol === 'dueno')
+                <a href="{{ route('welcome') }}">Inicio</a>
+                <a href="{{ route('negocio.catalogo') }}">Catálogo</a>
+  
+                <div class="dropdown"
+                     onmouseenter="this.querySelector('.dropdown-menu').style.display='block'"
+                     onmouseleave="this.querySelector('.dropdown-menu').style.display='none'">
+                    <button>Mi Negocio</button>
+                    <div class="dropdown-menu">
+                        <a href="{{ route('negocio.estadisticas') }}">Estadísticas</a>
+                        <a href="{{ route('negocio.configuracion') }}">Configuración</a>
+                        <a href="{{ route('negocio.domicilios') }}">Domicilios</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit">Cerrar sesión</button>
+                        </form>
+                    </div>
+                </div>
+  
+            @elseif (Auth::user()->rol === 'admin')
+                <a href="{{ route('welcome') }}">Inicio</a>
+                <a href="{{ route('admin.drones') }}">Monitoreo de drones</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            @endif
+        @endauth
+    </div>
+  </nav>
