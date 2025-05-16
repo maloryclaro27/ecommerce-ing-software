@@ -13,6 +13,7 @@ class Restaurante extends Model
         'tipo',
         'rating',
         'imagen',
+        'user_id',
     ];
 
     /**
@@ -23,5 +24,10 @@ class Restaurante extends Model
     public function productos(): HasMany
     {
         return $this->hasMany(Producto::class, 'restaurante_id');
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

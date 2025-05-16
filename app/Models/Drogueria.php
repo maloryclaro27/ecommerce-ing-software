@@ -13,10 +13,16 @@ class Drogueria extends Model
         'nombre',
         'rating',
         'imagen',
+        'user_id',
     ];
 
     public function productos(): HasMany
     {
         return $this->hasMany(Producto::class, 'drogueria_id');
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

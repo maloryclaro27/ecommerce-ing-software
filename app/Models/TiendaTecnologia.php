@@ -15,6 +15,7 @@ class TiendaTecnologia extends Model
         'nombre',
         'rating',
         'imagen',
+        'user_id',
     ];
 
     /**
@@ -23,5 +24,10 @@ class TiendaTecnologia extends Model
     public function productos(): HasMany
     {
         return $this->hasMany(Producto::class, 'tecnologia_id');
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

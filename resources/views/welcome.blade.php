@@ -1,15 +1,13 @@
 @extends('layouts.app')
-<!DOCTYPE html>
-<!-- Elemento raíz: Define el documento HTML y establece el idioma español. -->
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <!-- Configuración de vista: Hace que la página sea responsive en dispositivos móviles. -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Delivery - Servicio de Mensajería</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Importa la librería de iconos -->
-    <style>
-        *
+
+<style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
         /* Hero Section */
         .hero {
             background-color: rgb(300, 68, 31); /* Naranja intenso */
@@ -332,7 +330,7 @@
             }
         }
     </style>
-</head>
+
 <body>
     
     <!-- Hero Section -->

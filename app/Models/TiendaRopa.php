@@ -16,6 +16,7 @@ class TiendaRopa extends Model
         'nombre',
         'rating',
         'imagen',
+        'user_id',
     ];
 
     /**
@@ -24,5 +25,10 @@ class TiendaRopa extends Model
     public function productos(): HasMany
     {
         return $this->hasMany(Producto::class, 'ropa_id');
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

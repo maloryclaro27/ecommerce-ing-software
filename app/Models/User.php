@@ -7,6 +7,10 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Producto;
+use App\Models\Restaurante;       // ⬅ importación necesaria
+use App\Models\Drogueria;         // ⬅ importación necesaria
+use App\Models\TiendaRopa;        // ⬅ importación necesaria
+use App\Models\TiendaTecnologia;
 
 class User extends Authenticatable
 {
@@ -66,4 +70,27 @@ class User extends Authenticatable
     {
         return $this->hasMany(Producto::class, 'user_id');
     }
+
+    // app/Models/User.php
+
+    public function restaurantes()
+    {
+        return $this->hasMany(Restaurante::class, 'user_id');
+    }
+
+    public function droguerias()
+    {
+        return $this->hasMany(Drogueria::class, 'user_id');
+    }
+
+    public function tiendaRopa()
+    {
+        return $this->hasMany(TiendaRopa::class, 'user_id');
+    }
+
+    public function tiendaTecnologia()
+    {
+        return $this->hasMany(TiendaTecnologia::class, 'user_id');
+    }
+
 }

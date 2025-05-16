@@ -318,7 +318,7 @@
                 
                 <div class="form-group">
                     <label for="password" class="form-label">Contraseña</label>
-                    <input name="contrasena" type="password" id="password" class="form-input" placeholder="••••••••" required>
+                    <input name="password" type="password" id="password" class="form-input" placeholder="••••••••" required>
                     <i class="fas fa-lock input-icon"></i>
                     <div class="validation-message">La contraseña debe tener al menos 8 caracteres</div>
                 </div>
@@ -356,9 +356,12 @@
                     <button type="submit" class="submit-btn">
                         <i class="fas fa-user-plus"></i> Registrarse
                     </button>
-                    <p class="login-link">¿Ya tienes una cuenta? <button type="submit" class="auth-btn login-btn">
-                        <i class="fas fa-user-plus"></i> Iniciar sesión
-                    </button></p>
+                    <p class="login-link">
+                        ¿Ya tienes una cuenta? 
+                        <a href="{{ route('login') }}" class="auth-btn login-btn">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+                        </a>
+                    </p>                    
                 </div>
             </form>
         </div>
