@@ -6,12 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\ShippingDetail;
+use GuzzleHttp\Client;
 
 class CheckoutController extends Controller
 {
     /**
-     * Paso 1: Crea la orden (con envío), sus order_items, vacía el carrito
-     * y redirige al formulario de captura de envío/pago.
+     * Paso 1: Crear la orden (con envío), sus order_items,
+     * vaciar el carrito y redirigir al formulario de captura.
      */
     public function store(Request $request)
     {
@@ -28,14 +29,14 @@ class CheckoutController extends Controller
         // Envío = 10% del subtotal
         $shippingCost = round($subtotal * 0.10, 2);
 
-        // Total antes de puntos (subtotal + envío)
+        // Total provisional (subtotal + envío)
         $totalBeforePoints = $subtotal + $shippingCost;
 
-        // 1) Crear la orden con total provisional
+        // 1) Crear la orden con total provisional y estado inicial
         $order = $user->orders()->create([
             'total'         => $totalBeforePoints,
             'shipping_cost' => $shippingCost,
-            'status'        => 'pending',
+            'estado'        => 'pending',
         ]);
 
         // 2) Crear los order_items
@@ -57,28 +58,24 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Paso 2: Muestra el formulario para capturar dirección,
-     * teléfono y método de pago, con datos de usuario precargados.
+     * Paso 2: Mostrar el formulario para capturar dirección,
+     * teléfono y método de pago.
      */
     public function show(Order $order)
     {
-        if ($order->user_id !== Auth::id()) {
-            abort(403);
-        }
-
+        abort_unless($order->user_id === Auth::id(), 403);
         $user = Auth::user();
         return view('checkout', compact('order', 'user'));
     }
 
     /**
-     * Paso 3: Valida y guarda los datos de envío, aplica puntos,
-     * marca la orden como pagada, y redirige a la confirmación.
+     * Paso 3: Validar y guardar datos de envío/pago,
+     * geocodificar la dirección vía Nominatim, aplicar puntos,
+     * marcar como pagada y redirigir.
      */
     public function process(Request $request, Order $order)
     {
-        if ($order->user_id !== Auth::id()) {
-            abort(403);
-        }
+        abort_unless($order->user_id === Auth::id(), 403);
 
         $data = $request->validate([
             'direccion'      => 'required|string|max:255',
@@ -90,54 +87,68 @@ class CheckoutController extends Controller
         ]);
 
         $user = Auth::user();
-
-        // Determina puntos canjeables (múltiplos de 1000)
-        $available    = $user->loyalty_points;
+        $available = $user->loyalty_points;
         $maxCanjeable = intdiv($available, 1000) * 1000;
-        $usePoints    = min($data['use_points'], $maxCanjeable, $data['subtotal']);
-
-        // Calcula total neto tras canje de puntos
+        $usePoints = min($data['use_points'], $maxCanjeable, $data['subtotal']);
         $netTotal = $data['subtotal'] + $data['shipping_cost'] - $usePoints;
 
-        // 1) Guarda detalles de envío/pago
-        $order->shippingDetail()->create([
+        // 1) Guardar detalles de envío/pago
+        $shipping = $order->shippingDetail()->create([
             'direccion'      => $data['direccion'],
             'telefono'       => $data['telefono'],
             'payment_method' => $data['payment_method'],
         ]);
 
-        // 2) Actualiza la orden
-        $order->update([
-            'status'        => 'paid',
-            'total'         => $netTotal,
-            'shipping_cost' => $data['shipping_cost'],
+        // 2) Geocodificar la dirección usando Nominatim (OpenStreetMap)
+        $client = new Client([
+            'base_uri' => 'https://nominatim.openstreetmap.org',
+            'headers'  => ['User-Agent' => 'TuApp/1.0']
         ]);
 
-        // 3) Ajusta puntos del usuario:
-        //    resta los usados y suma los ganados (50puntos cada 1000 pagados)
+        $response = $client->get('/search', [
+            'query' => [
+                'format' => 'json',
+                'q'      => $data['direccion'],
+                'limit'  => 1,
+            ]
+        ]);
+
+        $body = json_decode($response->getBody(), true);
+        if (!empty($body[0]['lat']) && !empty($body[0]['lon'])) {
+            $shipping->update([
+                'lat' => $body[0]['lat'],
+                'lng' => $body[0]['lon'],
+            ]);
+        }
+
+        // 3) Actualizar la orden: total final y estado
+        $order->update([
+            'total'         => $netTotal,
+            'shipping_cost' => $data['shipping_cost'],
+            'estado'        => 'paid',
+        ]);
+
+        // 4) Ajustar puntos del usuario
         $earned = intdiv($netTotal, 1000) * 50;
         $user->loyalty_points = $available - $usePoints + $earned;
         $user->save();
 
-        // 4) Guarda en sesión los puntos usados y ganados para mostrar
+        // 5) Guardar en sesión los puntos usados y ganados
         session([
             'loyalty_used'   => $usePoints,
             'loyalty_earned' => $earned,
         ]);
 
-        // 5) Redirige a la vista de pago realizado
+        // 6) Redirigir a la página de confirmación de pago
         return redirect()->route('checkout.done', $order->id);
     }
 
     /**
-     * Paso 4: Muestra la página de confirmación de pago.
+     * Paso 4: Mostrar la página de confirmación de pago.
      */
     public function done(Order $order)
     {
-        if ($order->user_id !== Auth::id()) {
-            abort(403);
-        }
-
+        abort_unless($order->user_id === Auth::id(), 403);
         return view('pago_realizado', compact('order'));
     }
 }

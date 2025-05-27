@@ -10,10 +10,13 @@ class Restaurante extends Model
 
     protected $fillable = [
         'nombre',
+        'direccion',
         'tipo',
         'rating',
         'imagen',
         'user_id',
+        'lat',
+        'lng',
     ];
 
     /**

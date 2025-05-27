@@ -13,6 +13,7 @@ class Producto extends Model
 
     protected $fillable = [
         'user_id',
+        'category_id',
         'nombre',
         'descripcion',
         'precio',
@@ -49,6 +50,10 @@ class Producto extends Model
     public function tecnologia(): BelongsTo
     {
         return $this->belongsTo(TiendaTecnologia::class, 'tecnologia_id');
+    }
+    public function category()
+    {
+        return $this->belongsTo(Catalogo::class, 'category_id');
     }
     
 }

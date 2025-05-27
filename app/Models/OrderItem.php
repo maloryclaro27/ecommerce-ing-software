@@ -26,6 +26,14 @@ class OrderItem extends Model
         return $this->belongsTo(Producto::class, 'producto_id');
     }
 
+    public function establecimiento()
+    {
+        return $this->morphTo(
+            'establecimiento',   // nombre de la relación
+            'establecimiento_tipo', // columna tipo
+            'establecimiento_id'    // columna id
+        );
+    }
     /**
      * Relación con la orden padre
      */

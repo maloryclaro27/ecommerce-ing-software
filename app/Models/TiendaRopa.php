@@ -14,9 +14,12 @@ class TiendaRopa extends Model
     // Campos asignables
     protected $fillable = [
         'nombre',
+        'direccion',
         'rating',
         'imagen',
         'user_id',
+        'lat',
+        'lng',
     ];
 
     /**

@@ -151,13 +151,14 @@
   
             @elseif (Auth::user()->rol === 'dueno')
                 <a href="{{ route('welcome') }}">Inicio</a>
-                <a href="{{ route('negocio.catalogo') }}">Catálogo</a>
+                <a href="{{ route('catalogo') }}">Catálogo</a>
   
                 <div class="dropdown"
                      onmouseenter="this.querySelector('.dropdown-menu').style.display='block'"
                      onmouseleave="this.querySelector('.dropdown-menu').style.display='none'">
                     <button>Mi Negocio</button>
                     <div class="dropdown-menu">
+                        <a href="{{ route('negocio.catalogo') }}">Catálogo</a>
                         <a href="{{ route('negocio.estadisticas') }}">Estadísticas</a>
                         <a href="{{ route('negocio.configuracion') }}">Configuración</a>
                         <a href="{{ route('negocio.domicilios') }}">Domicilios</a>

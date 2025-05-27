@@ -11,6 +11,8 @@ class ShippingDetail extends Model
       'direccion',
       'telefono',
       'payment_method',
+      'lat',
+      'lng',
     ];
 
     public function order()

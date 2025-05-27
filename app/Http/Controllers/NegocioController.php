@@ -26,11 +26,12 @@ class NegocioController extends Controller
     // Guardar nuevo producto (AJAX)
     public function store(Request $request, $id)
     {
+        
         $request->validate([
             'nombre' => 'required|string|max:90',
             'descripcion' => 'nullable|string',
             'precio' => 'required|numeric|min:0',
-            'imagen' => 'nullable|image|max:2048',
+            //'imagen' => 'nullable|image|max:2048',
         ]);
 
         $rutaImagen = null;
@@ -38,16 +39,19 @@ class NegocioController extends Controller
             $rutaImagen = $request->file('imagen')->store('productos', 'public');
         }
 
-        Producto::create([
+        $producto = Producto::create([
             'user_id'     => Auth::id(),
+            'category_id' => Auth::user()->categoria_negocio,
             'nombre'      => $request->nombre,
             'descripcion' => $request->descripcion,
             'precio'      => $request->precio,
-            'imagen'      => $rutaImagen ? '/storage/' . $rutaImagen : '',
+            //'imagen'      => $rutaImagen ? '/storage/' . $rutaImagen : '',
         ]);
+        dd($producto->toArray());
 
         return response()->json(['success' => true]);
     }
+
 
     // Actualizar producto (AJAX)
     public function update(Request $request, $id, $productId)
@@ -72,6 +76,7 @@ class NegocioController extends Controller
         }
 
         $producto->update([
+            'category_id' => Auth::user()->categoria_negocio,
             'nombre'      => $request->nombre,
             'descripcion' => $request->descripcion,
             'precio'      => $request->precio,

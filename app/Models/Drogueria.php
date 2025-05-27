@@ -11,9 +11,12 @@ class Drogueria extends Model
 
     protected $fillable = [
         'nombre',
+        'direccion',
         'rating',
         'imagen',
         'user_id',
+        'lat',
+        'lng',
     ];
 
     public function productos(): HasMany
