@@ -81,46 +81,43 @@
         display: none;
     }
 
-    .btn-primary {
-        padding: 12px 25px;
-        background-color: #ff441f;
-        color: white;
-        border: none;
-        border-radius: 30px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: 1rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .btn-primary:hover {
-        background-color: #e03a1a;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(255, 68, 31, 0.3);
-    }
-
-    .btn-secondary {
-        padding: 12px 25px;
+    /* Botones de acción: estilos tomados del blade de carrito */
+    .continue-btn {
+        padding: 10px 20px;
         background-color: white;
         color: #ff441f;
         border: 2px solid #ff441f;
         border-radius: 30px;
         font-weight: bold;
-        cursor: pointer;
         transition: all 0.3s;
-        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
         text-decoration: none;
-        display: inline-flex;
+    }
+    .continue-btn:hover {
+        background-color: #ff441f;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 68, 31, 0.3);
+    }
+
+    .checkout-btn {
+        padding: 10px 20px;
+        background-color: #ff441f;
+        color: white;
+        border: 2px solid #ff441f;
+        border-radius: 30px;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: flex;
         align-items: center;
         gap: 8px;
     }
-
-    .btn-secondary:hover {
-        background-color: #ff441f;
-        color: white;
+    .checkout-btn:hover {
+        background-color: #e03a1a;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 68, 31, 0.3);
     }
 
     .action-buttons {
@@ -140,7 +137,8 @@
             gap: 15px;
         }
         
-        .btn-primary, .btn-secondary {
+        .continue-btn,
+        .checkout-btn {
             width: 100%;
             justify-content: center;
         }
@@ -150,14 +148,14 @@
 <div class="delivery-container">
     <h1 class="section-title">Domicilios Programados</h1>
     
-    <div class="delivery-card">
-        <p style="margin-bottom: 25px; color: #666; text-align: center;">
-            Programa la recogida y entrega de tus paquetes mediante nuestro servicio de drones.
-            <br>Máximo: 2.5kg | Dimensiones: 40x30x30cm
-        </p>
-        
-        <form id="scheduledDeliveryForm">
-            @csrf
+    <form id="scheduledDeliveryForm" action="{{ route('checkout.store') }}" method="POST">
+        @csrf
+
+        <div class="delivery-card">
+            <p style="margin-bottom: 25px; color: #666; text-align: center;">
+                Programa la recogida y entrega de tus paquetes mediante nuestro servicio de drones.
+                <br>Máximo: 2.5kg | Dimensiones: 40x30x30cm
+            </p>
             
             <h3 style="color: #ff441f; margin-bottom: 20px;">Información del paquete</h3>
             
@@ -213,17 +211,21 @@
                 <label class="form-label">Instrucciones adicionales (opcional)</label>
                 <textarea class="form-control" id="deliveryNotes" name="notes" rows="3"></textarea>
             </div>
-            
-            <div class="action-buttons">
-                <a href="{{ url()->previous() }}" class="btn-secondary">
-                    Cancelar
-                </a>
-                <button type="submit" class="btn-primary" id="submitBtn">
-                    Programar domicilio
-                </button>
-            </div>
-        </form>
-    </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ url()->previous() }}" class="continue-btn">
+                Cancelar
+            </a>
+            <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST" class="hidden">
+              @csrf
+            </form>
+            <button onclick="document.getElementById('checkout-form').submit()"
+                    class="checkout-btn">
+              Realizar pago
+            </button>
+        </div>
+    </form>
 </div>
 
 <script>
@@ -274,9 +276,9 @@
             e.preventDefault();
             
             if (validateDimensions()) {
-                // Aquí iría la lógica para enviar el formulario
                 alert('Domicilio programado correctamente. Nos pondremos en contacto para confirmar los detalles.');
-                // form.submit(); // Descomentar para enviar realmente
+                // Descomenta la siguiente línea para enviar realmente:
+                // form.submit();
             }
         });
         

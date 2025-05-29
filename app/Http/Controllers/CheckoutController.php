@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\ShippingDetail;
-use GuzzleHttp\Client;
 
 class CheckoutController extends Controller
 {
@@ -30,16 +29,16 @@ class CheckoutController extends Controller
         $shippingCost = round($subtotal * 0.10, 2);
 
         // Total provisional (subtotal + envío)
-        $totalBeforePoints = $subtotal + $shippingCost;
+        $totalBefore = $subtotal + $shippingCost;
 
         // 1) Crear la orden con total provisional y estado inicial
         $order = $user->orders()->create([
-            'total'         => $totalBeforePoints,
+            'total'         => $totalBefore,
             'shipping_cost' => $shippingCost,
             'estado'        => 'pending',
         ]);
 
-        // 2) Crear los order_items
+        // 2) Crear los order_items usando el campo polymorphic existente
         foreach ($cartItems as $ci) {
             $order->items()->create([
                 'producto_id'         => $ci->producto_id,
@@ -64,82 +63,62 @@ class CheckoutController extends Controller
     public function show(Order $order)
     {
         abort_unless($order->user_id === Auth::id(), 403);
-        $user = Auth::user();
-        return view('checkout', compact('order', 'user'));
+        return view('checkout', [
+            'order' => $order,
+            'user'  => Auth::user(),
+        ]);
     }
 
     /**
      * Paso 3: Validar y guardar datos de envío/pago,
-     * geocodificar la dirección vía Nominatim, aplicar puntos,
-     * marcar como pagada y redirigir.
+     * usar coordenadas fijas desde configuración,
+     * aplicar puntos, marcar como pagada y redirigir.
      */
     public function process(Request $request, Order $order)
     {
         abort_unless($order->user_id === Auth::id(), 403);
 
         $data = $request->validate([
-            'direccion'      => 'required|string|max:255',
             'telefono'       => 'required|string|max:20',
-            'payment_method' => 'required|in:tarjeta,transferencia,contraentrega',
             'use_points'     => 'required|integer|min:0',
             'subtotal'       => 'required|numeric',
             'shipping_cost'  => 'required|numeric',
         ]);
 
-        $user = Auth::user();
+        $user      = Auth::user();
         $available = $user->loyalty_points;
-        $maxCanjeable = intdiv($available, 1000) * 1000;
-        $usePoints = min($data['use_points'], $maxCanjeable, $data['subtotal']);
-        $netTotal = $data['subtotal'] + $data['shipping_cost'] - $usePoints;
+        $maxCanje  = intdiv($available, 1000) * 1000;
+        $usePoints = min($data['use_points'], $maxCanje, $data['subtotal']);
+        $netTotal  = $data['subtotal'] + $data['shipping_cost'] - $usePoints;
 
-        // 1) Guardar detalles de envío/pago
+        // 1) Crear ShippingDetail con valores fijos
         $shipping = $order->shippingDetail()->create([
-            'direccion'      => $data['direccion'],
+            'direccion'      => config('delivery.delivery_address'),
             'telefono'       => $data['telefono'],
-            'payment_method' => $data['payment_method'],
+            'payment_method' => 'tarjeta',
+            'lat'            => config('delivery.delivery_lat'),
+            'lng'            => config('delivery.delivery_lng'),
         ]);
 
-        // 2) Geocodificar la dirección usando Nominatim (OpenStreetMap)
-        $client = new Client([
-            'base_uri' => 'https://nominatim.openstreetmap.org',
-            'headers'  => ['User-Agent' => 'TuApp/1.0']
-        ]);
-
-        $response = $client->get('/search', [
-            'query' => [
-                'format' => 'json',
-                'q'      => $data['direccion'],
-                'limit'  => 1,
-            ]
-        ]);
-
-        $body = json_decode($response->getBody(), true);
-        if (!empty($body[0]['lat']) && !empty($body[0]['lon'])) {
-            $shipping->update([
-                'lat' => $body[0]['lat'],
-                'lng' => $body[0]['lon'],
-            ]);
-        }
-
-        // 3) Actualizar la orden: total final y estado
+        // 2) Actualizar la orden: total y estado
         $order->update([
             'total'         => $netTotal,
             'shipping_cost' => $data['shipping_cost'],
             'estado'        => 'paid',
         ]);
 
-        // 4) Ajustar puntos del usuario
-        $earned = intdiv($netTotal, 1000) * 50;
+        // 3) Ajustar puntos del usuario
+        $earned               = intdiv($netTotal, 1000) * 50;
         $user->loyalty_points = $available - $usePoints + $earned;
         $user->save();
 
-        // 5) Guardar en sesión los puntos usados y ganados
+        // 4) Guardar en sesión los puntos usados y ganados
         session([
             'loyalty_used'   => $usePoints,
             'loyalty_earned' => $earned,
         ]);
 
-        // 6) Redirigir a la página de confirmación de pago
+        // 5) Redirigir a la confirmación de pago
         return redirect()->route('checkout.done', $order->id);
     }
 

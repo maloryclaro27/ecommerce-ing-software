@@ -122,6 +122,14 @@
                 <!-- Ocultos para controlador -->
                 <input type="hidden" name="subtotal" value="{{ $order->total - $order->shipping_cost }}">
                 <input type="hidden" name="shipping_cost" value="{{ $order->shipping_cost }}">
+                <input type="hidden" name="establecimiento_id"
+                       value="{{ $order->establecimiento_id }}">
+                <input type="hidden" name="establecimiento_tipo"
+                       value="{{ $order->establecimiento_tipo }}">
+                <input type="hidden" name="entrega_lat"
+                       value="{{ optional($order->shippingDetail)->lat }}">
+                <input type="hidden" name="entrega_lng"
+                       value="{{ optional($order->shippingDetail)->lng }}">
 
                 <!-- Resumen -->
                 <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-[#ff441f]">Resumen de Compra</h2>

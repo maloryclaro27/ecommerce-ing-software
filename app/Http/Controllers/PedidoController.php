@@ -71,30 +71,53 @@ class PedidoController extends Controller
      * asociado al primer ítem del pedido y destino del shippingDetail.
      */
     public function monitor($pedidoId)
-{
-    $order = Order::with(['transporte', 'items.establecimiento', 'shippingDetail'])
-                  ->findOrFail($pedidoId);
-    abort_unless($order->user_id === Auth::id(), 403);
+    
+    {
+        $order = Order::with([
+            'transporte',
+            'items.establecimiento',    // para el negocio de origen
+            'shippingDetail'            // para la dirección del cliente
+            ])
+            ->where('id', $pedidoId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+        
 
-    // Intentamos obtener el establecimiento de origen
-    $firstItem = $order->items->first();
-    $business  = $firstItem?->establecimiento;
+// 2. Determinar coordenadas de origen (negocio)
+        $firstItem = $order->items->first();
+        
 
-    // Extraemos coordenadas, o null si no existen
-    $originLat = $business->lat   ?? null;
-    $originLng = $business->lng   ?? null;
-    $destLat   = $order->shippingDetail->lat ?? null;
-    $destLng   = $order->shippingDetail->lng ?? null;
+        $originLat = config('delivery.business_lat');
+        $originLng = config('delivery.business_lng');
+        $destLat   = config('delivery.delivery_lat');
+        $destLng   = config('delivery.delivery_lng');
 
-    // Pasamos todo a la vista sin abortar
-    return view('pedidos_monitor', [
-        'order'      => $order,
-        'originLat'  => $originLat,
-        'originLng'  => $originLng,
-        'destLat'    => $destLat,
-        'destLng'    => $destLng,
-    ]);
-}
+        
+
+// 3) Extraer destino (cliente) y sus coordenadas
+        $sd       = $order->shippingDetail;
+        
+
+        // ——— Inserta aquí tu depuración ————————————
+        \Log::debug('Origen coords:', [
+            'lat' => $originLat,
+            'lng' => $originLng,
+        ]);
+        \Log::debug('Destino coords:', [
+            'lat' => $destLat,
+            'lng' => $destLng,
+        ]);
+
+// 4) (Opcional) depuración en log
+        \Log::debug("Monitor coords", compact('originLat','originLng','destLat','destLng'));
+
+// 5) Pasar todo a la vista
+        return view('pedidos_monitor', compact(
+            'order',
+            'originLat','originLng',
+            'destLat','destLng'
+        ));
+    }
 
 
     /**

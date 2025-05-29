@@ -17,7 +17,8 @@ class CartController extends Controller
         $request->validate([
             'producto_id'         => 'required|exists:productos,id',
             'establecimiento_id'  => 'required|integer',
-            'establecimiento_tipo'=> 'required|integer',
+            'establecimiento_tipo' => 'nullable|string|max:255',
+
         ]);
 
         $user = Auth::user();

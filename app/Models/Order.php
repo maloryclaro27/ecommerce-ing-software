@@ -16,10 +16,14 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'total',
+        'subtotal',           // si lo guardas en orders
         'shipping_cost',
-        'estado',          // estado de pago o procesamiento interno
+        'payment_method',     // si prefieres guardarlo aquí
+        'estado',             // estado de pago o procesamiento interno
         'transporte_id',
-        'estado_entrega',  // preparación, en_curso, entregado
+        'establecimiento_id',  // <— nuevo
+        'establecimiento_tipo',// <— nuevo
+        'estado_entrega',     // preparación, en_curso, entregado
     ];
 
     /**

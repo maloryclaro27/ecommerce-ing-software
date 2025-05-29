@@ -35,6 +35,7 @@ use App\Http\Controllers\RestauranteController;
 use App\Http\Controllers\DrogueriaController;
 use App\Http\Controllers\TiendaRopaController;
 use App\Http\Controllers\TiendaTecnologiaController;
+use App\Http\Controllers\AdminDronesController;
 
 
 /*
@@ -177,6 +178,8 @@ Route::middleware('auth')->group(function () {
     | Panel de administrador
     |--------------------------------------------------------------------------
     */
-    Route::get('/admin/drones', [AdminController::class, 'monitoreoDrones'])
-         ->name('admin.drones');
+    Route::get('/admin/drones', [AdminDronesController::class, 'index'])
+          ->name('admin.drones')
+          ->middleware('auth');
+
 });
